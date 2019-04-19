@@ -1,0 +1,5 @@
+flask
+twitter
+selenium
+bs4
+gunicorn
