@@ -1,5 +1,9 @@
 flask
-twitter
 selenium
 bs4
+random
+re
+urllib.request
+json
+requests_oauthlib
 gunicorn
