@@ -16,12 +16,6 @@ from requests_oauthlib import OAuth1Session
 URL_TEXT='https://api.twitter.com/1.1/statuses/update.json'
 URL_TL='https://api.twitter.com/1.1/statuses/home_timeline.json'
 URL_MEDIA='https://upload.twitter.com/1.1/media/upload.json'
-CONSUMER_KEY="0PWItx3y8rT56fHmoksjCD3p8"
-CONSUMER_SECRET="Oc7v7lETeQdhOb2mnCXd3hiSBlgJ4DlYSADt7uZlBFSo9IRpbB"
-TOKEN="1103483478723584000-WCkBL5Hjf5bB6rZlsbgrSy2LrPLj8I"
-TOKEN_SECRET="FiRIR90V4wBv8TvVlclJn5WPWQIvENCMickfD32T96V2B"
-
-##
 # options=Options()
 # options.binary_location = './static/chromedriver_win32/chromedriver.exe'
 # options.add_argument('--headless')
@@ -158,7 +152,7 @@ while True:
 #     print(timeline['id'],timeline['text'])
 
 
-## use tweepy
+## tweepyを使う場合
 # auth=tweepy.OAuthHandler(CONSUMER_KEY,CONSUMER_SECRET)
 # auth.set_access_token(TOKEN,TOKEN_SECRET)
 # t=tweepy.API(auth)
