@@ -1,6 +1,5 @@
 selenium
 bs4
-urllib.request
 json
 requests_oauthlib
 gunicorn
