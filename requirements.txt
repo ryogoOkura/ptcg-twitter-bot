@@ -1,6 +1,5 @@
 selenium
 bs4
-random
 re
 urllib.request
 json
