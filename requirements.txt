@@ -1,5 +1,4 @@
 selenium
 bs4
-json
 requests_oauthlib
 gunicorn
