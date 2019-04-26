@@ -12,6 +12,7 @@ URL_PTCG='https://www.pokemon-card.com/'
 URL_PTCG_RULE='rules/faq/'
 import urllib.request
 import json
+import os
 from requests_oauthlib import OAuth1Session
 URL_TEXT='https://api.twitter.com/1.1/statuses/update.json'
 URL_TL='https://api.twitter.com/1.1/statuses/home_timeline.json'
@@ -83,7 +84,7 @@ driver.close()
 driver.quit()
 
 ## リプツリーの形でツイート
-mySession=OAuth1Session(CONSUMER_KEY,CONSUMER_SECRET,TOKEN,TOKEN_SECRET)
+mySession=OAuth1Session(os.environ['CONSUMER_KEY'],os.environ['CONSUMER_SECRET'],os.environ['TOKEN'],os.environ['TOKEN_SECRET'])
 
 ## 画像のアップロード
 mediaIDs=['' for _ in range(imgCnt//4+1)]
