@@ -83,7 +83,7 @@ for card in keyCards:
 driver.close()
 driver.quit()
 
-## リプツリーの形でツイート
+## リプツリーの形でツイートしていく
 mySession=OAuth1Session(os.environ['CONSUMER_KEY'],os.environ['CONSUMER_SECRET'],os.environ['TOKEN'],os.environ['TOKEN_SECRET'])
 
 ## 画像のアップロード
@@ -180,7 +180,7 @@ while True:
 #     if len(status)<=140:
 #         break
 #     status=status[140:]
-
+#
 ## おまけ　タイムラインの取得
 # timelines=t.home_timeline()
 # for timeline in timelines:
