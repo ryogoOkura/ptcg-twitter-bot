@@ -18,7 +18,7 @@ URL_TEXT='https://api.twitter.com/1.1/statuses/update.json'
 URL_TL='https://api.twitter.com/1.1/statuses/home_timeline.json'
 URL_MEDIA='https://upload.twitter.com/1.1/media/upload.json'
 options=Options()
-options.binary_location = './static/chromedriver_win32/chromedriver.exe'
+options.binary_location = '/app/.apt/usr/bin/google-chrome'
 # options.add_argument('--headless')
 driver=webdriver.Chrome(chrome_options=options)
 # driver=webdriver.PhantomJS()
