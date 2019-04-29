@@ -19,7 +19,7 @@ URL_TL='https://api.twitter.com/1.1/statuses/home_timeline.json'
 URL_MEDIA='https://upload.twitter.com/1.1/media/upload.json'
 options=Options()
 options.binary_location = '/app/.apt/usr/bin/google-chrome'
-# options.add_argument('--headless')
+options.add_argument('--headless')
 driver=webdriver.Chrome(chrome_options=options)
 # driver=webdriver.PhantomJS()
 driver.set_window_size(1124, 850)
