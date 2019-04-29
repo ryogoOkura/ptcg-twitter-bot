@@ -17,11 +17,11 @@ from requests_oauthlib import OAuth1Session
 URL_TEXT='https://api.twitter.com/1.1/statuses/update.json'
 URL_TL='https://api.twitter.com/1.1/statuses/home_timeline.json'
 URL_MEDIA='https://upload.twitter.com/1.1/media/upload.json'
-# options=Options()
-# options.binary_location = './static/chromedriver_win32/chromedriver.exe'
+options=Options()
+options.binary_location = './static/chromedriver_win32/chromedriver.exe'
 # options.add_argument('--headless')
-# driver=webdriver.Chrome(chrome_options=options)
-driver=webdriver.PhantomJS()
+driver=webdriver.Chrome(chrome_options=options)
+# driver=webdriver.PhantomJS()
 driver.set_window_size(1124, 850)
 driver.implicitly_wait(30)
 
