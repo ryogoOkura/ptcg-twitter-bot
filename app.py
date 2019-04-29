@@ -10,7 +10,8 @@ import re
 SERIES_RANGE=4
 URL_PTCG='https://www.pokemon-card.com/'
 URL_PTCG_RULE='rules/faq/'
-import urllib.request
+# import urllib.request
+import requests
 import json
 import os
 from requests_oauthlib import OAuth1Session
@@ -74,10 +75,12 @@ for card in keyCards:
     soup=BeautifulSoup(html, 'html.parser')
     img=soup.find('img',attrs={'class':'fit'})
 
-    data=urllib.request.urlopen(URL_PTCG+img.get('src')).read()
+    # data=urllib.request.urlopen(URL_PTCG+img.get('src')).read()
+    response=requests.get(URL_PTCG+img.get('src'),stream=True)
     imagePaths[imgCnt]='./'+str(imgCnt)+'.jpg'
     with open(imagePaths[imgCnt],mode="wb") as f:
-        f.write(data)
+        # f.write(data)
+        f.write(response.content)
     imgCnt+=1
 
 driver.close()
