@@ -2,4 +2,3 @@ selenium
 bs4
 requests
 requests_oauthlib
-gunicorn
