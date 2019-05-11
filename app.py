@@ -18,11 +18,12 @@ from requests_oauthlib import OAuth1Session
 URL_TEXT='https://api.twitter.com/1.1/statuses/update.json'
 URL_TL='https://api.twitter.com/1.1/statuses/home_timeline.json'
 URL_MEDIA='https://upload.twitter.com/1.1/media/upload.json'
+
 options=Options()
 options.binary_location = '/app/.apt/usr/bin/google-chrome'
 options.add_argument('--headless')
 driver=webdriver.Chrome(chrome_options=options)
-# driver=webdriver.PhantomJS()
+# driver=webdriver.PhantomJS()  # for local
 driver.set_window_size(1124, 850)
 driver.implicitly_wait(30)
 
@@ -32,7 +33,6 @@ WebDriverWait(driver,WAIT_SECOND).until(EC.presence_of_element_located((By.CLASS
 html=driver.page_source.encode('utf-8')
 soup=BeautifulSoup(html, 'html.parser')
 commodities=soup.find_all('a',attrs={'class':'ProductList_item_inner'})
-# print(commodities)
 productID=commodities[random.randint(0,SERIES_RANGE)].get('href')
 
 ## Q&Aの件数を取得
@@ -40,17 +40,12 @@ driver.get(URL_PTCG+URL_PTCG_RULE+productID)
 WebDriverWait(driver,WAIT_SECOND).until(EC.presence_of_element_located((By.CLASS_NAME, "HitNum")))
 html=driver.page_source.encode('utf-8')
 soup=BeautifulSoup(html, 'html.parser')
-# print(soup)
 # hitCount=soup.find_all('div',attr={'class':'HitNum'})
 # searchResult=soup.find('section',attr={'class':'SearchResult'})
 searchResult=soup.find(text=re.compile(u'件'))
-# print(searchResult.parent.span.text)
-# print(re.match(r'\d+',searchResult.parent.text))
 hitNum=int(searchResult.parent.span.text)
 num=random.randint(0,hitNum-1)
 pageNum=num//10+1
-# print(hitNum,num)
-# print(url+productID+'&page='+str(pageNum))
 
 ## Q&Aをランダムに取得
 driver.get(URL_PTCG+URL_PTCG_RULE+productID+'&page='+str(pageNum))
@@ -59,11 +54,7 @@ html=driver.page_source.encode('utf-8')
 soup=BeautifulSoup(html, 'html.parser')
 listItems=soup.find_all('li',attrs={'class':'FAQResultList_item'})
 bodys=listItems[num%10].find_all('div',attrs={'class':'BodyArea'})
-# for body in bodys:
-#     print(body.text)
 keyCards=listItems[num%10].find_all('a',attrs={'class':'popup-card-detail'})
-# for card in keyCards:
-#     print(card.string,card.get('href'))
 
 ## 関連カード画像を取得
 imagePaths=['' for _ in keyCards]
@@ -88,6 +79,9 @@ driver.quit()
 
 ## リプツリーの形でツイートしていく
 mySession=OAuth1Session(os.environ['CONSUMER_KEY'],os.environ['CONSUMER_SECRET'],os.environ['TOKEN'],os.environ['TOKEN_SECRET'])
+# from .consts import CONSUMER_KEY,CONSUMER_SECRET,TOKEN,TOKEN_SECRET  # for local
+# mySession=OAuth1Session(CONSUMER_KEY,CONSUMER_SECRET,TOKEN,TOKEN_SECRET)  # for local
+
 
 ## 画像のアップロード
 mediaIDs=['' for _ in range(imgCnt//4+1)]
