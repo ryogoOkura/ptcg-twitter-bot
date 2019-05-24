@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import random
 import re
-SERIES_RANGE=4
+SERIES_RANGE=1
 URL_PTCG='https://www.pokemon-card.com/'
 URL_PTCG_RULE='rules/faq/'
 # import urllib.request
