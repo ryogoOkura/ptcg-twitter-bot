@@ -31,13 +31,12 @@ def main():
     options=Options()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
-    options.add_argument('--disable-extentions')
+    options.add_argument('--disable-extentions') # 拡張機能無効化
     options.add_argument('--proxy-server="direct://"')
     options.add_argument('--proxy-bypass-list=*')
     options.add_argument('--start-maxmized') # windowサイズ最大化
     driver=webdriver.Chrome(executable_path=driver_path, chrome_options=options)
     WAIT_SECOND=30 # 最大表示待ち時間
-    # options.binary_location = '/app/.apt/usr/bin/google-chrome'
 
     ## 直近の SERIES_RANGE 個の商品からランダムに選択し、そのURLを取得
     ## "Uncaught TypeError: PTC.setCardDetailPopupWindow is not a function" が出る
@@ -81,11 +80,9 @@ def main():
         soup=BeautifulSoup(html, 'html.parser')
         img=soup.find('img',attrs={'class':'fit'})
 
-        # data=urllib.request.urlopen(URL_PTCG+img.get('src')).read()
         response=requests.get(URL_PTCG+img.get('src'),stream=True)
         imagePaths[imgCnt]='./'+str(imgCnt)+'.jpg'
         with open(imagePaths[imgCnt],mode="wb") as f:
-            # f.write(data)
             f.write(response.content)
         imgCnt+=1
 
@@ -115,46 +112,56 @@ def main():
     ## Questionのツイート
     status='Q '+bodys[0].text
     isReply=False
+    isTweeting=True
     tweetCnt=0
-    while True:
-        params={'status':status[:140]}
+    tweet_max=140
+    while isTweeting:
+        params={'status':status[:tweet_max]}
         if isReply:
             req_tl=mySession.get(URL_TL)
             # if req_tl.status_code!=200:
             #     print('time line error'+req_tl.text)
             id=json.loads(req_tl.text)[0]['id']
             params['in_reply_to_status_id']=id
-        if imgCnt//4>=tweetCnt:
+
+        ## 質問文に４つずつ画像を添付する
+        ## tweetCnt=0に対してimgCnt=1~4
+        if (imgCnt-1)//4>=tweetCnt:
             params['media_ids']=mediaIDs[tweetCnt]
+        ## 字数がtweet_maxを超えるなら分ける（statusが未tweet文章）
+        if len(status)<=tweet_max:
+            if (imgCnt-1)//4>=tweetCnt+1:
+                status='カードの表示'
+            else:
+                isTweeting=False
+        else:
+            params['status']=params['status'][:(tweet_max-4)]+'（続く）'
+            status=status[(tweet_max-4):]
         req_text=mySession.post(URL_TEXT,params=params)
         # if req_text.status_code!=200:
         #     print('tweet error:'+req_text.text)
 
         tweetCnt+=1
-        if len(status)<=140:
-            if imgCnt//4>=tweetCnt:
-                status='カードの表示'
-            else:
-                break
-        else:
-            status=status[140:]
         isReply=True
 
     ## Answerのツイート
     status='A '+bodys[1].text
-    while True:
-        params={'status':status[:140]}
+    isTweeting=True
+    while isTweeting:
+        params={'status':status[:tweet_max]}
         req_tl=mySession.get(URL_TL)
         # if req_tl.status_code!=200:
         #     print('timeline error'+req_tl.text)
         id=json.loads(req_tl.text)[0]['id']
         params['in_reply_to_status_id']=id
+        if len(status)<=tweet_max:
+            isTweeting=False
+        else:
+            params['status']=params['status'][:(tweet_max-4)]+'（続く）'
+            status=status[(tweet_max-4):]
         req_text=mySession.post(URL_TEXT,params=params)
         # if req_text.status_code!=200:
         #     print('tweet error:'+req_text.text)
-        if len(status)<=140:
-            break
-        status=status[140:]
 
 if __name__=='__main__':
     main()
