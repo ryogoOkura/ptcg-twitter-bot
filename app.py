@@ -18,16 +18,9 @@ URL_TEXT='https://api.twitter.com/1.1/statuses/update.json'
 URL_TL='https://api.twitter.com/1.1/statuses/home_timeline.json'
 URL_MEDIA='https://upload.twitter.com/1.1/media/upload.json'
 
-isLocal=False
-if isLocal:
-    import consts
-
 def main():
     ## ウェブドライバ起動
-    if isLocal:
-        driver_path='C:\driver\chromedriver_win32\chromedriver'
-    else:
-        driver_path='/app/.chromedriver/bin/chromedriver'
+    driver_path='/app/.chromedriver/bin/chromedriver'
     options=Options()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
@@ -96,10 +89,7 @@ def main():
 
     ## リプツリーの形でツイートしていく
     ## セッション開始
-    if isLocal:
-        mySession=OAuth1Session(consts.CONSUMER_KEY, consts.CONSUMER_SECRET, consts.TOKEN, consts.TOKEN_SECRET)
-    else:
-        mySession=OAuth1Session(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'], os.environ['TOKEN'], os.environ['TOKEN_SECRET'])
+    mySession=OAuth1Session(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'], os.environ['TOKEN'], os.environ['TOKEN_SECRET'])
 
     ## 画像のアップロード
     mediaIDs=['' for _ in range(imgCnt//4+1)]
