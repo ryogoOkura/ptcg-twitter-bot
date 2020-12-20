@@ -38,16 +38,22 @@ def main():
     driver=webdriver.Chrome(executable_path=driver_path, chrome_options=options)
     WAIT_SECOND=30 # 最大表示待ち時間
 
-    ## 直近の SERIES_RANGE 個の商品からランダムに選択し、そのURLを取得
+    # ## 直近の SERIES_RANGE 個の商品からランダムに選択し、そのURLを取得
+    # SERIES_RANGE=0
+    # productID=commodities[random.randint(0,SERIES_RANGE)].get('href')
+
+    ## 一番直近のパックの商品を選択し、そのURLを取得
     ## "Uncaught TypeError: PTC.setCardDetailPopupWindow is not a function" が出る
-    SERIES_RANGE=1
     driver.get(URL_PTCG+URL_PTCG_RULE)
     WebDriverWait(driver,WAIT_SECOND).until(EC.presence_of_element_located((By.CLASS_NAME, "ProductList_item_inner")))
     html=driver.page_source.encode('utf-8')
     soup=BeautifulSoup(html, 'html.parser')
     commodities=soup.find_all('a',attrs={'class':'ProductList_item_inner'})
-    productID=commodities[random.randint(0,SERIES_RANGE)].get('href')
-
+    productID=''
+    for comi in commodities:
+        if 'パック' in comi.get_text():
+            productID=comi.get('href')
+            break
     ## Q&Aの件数を取得し、ランダムに選択
     driver.get(URL_PTCG+URL_PTCG_RULE+productID)
     WebDriverWait(driver,WAIT_SECOND).until(EC.presence_of_element_located((By.CLASS_NAME, "HitNum")))
