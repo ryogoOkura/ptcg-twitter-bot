@@ -36,7 +36,6 @@ def main():
     # productID=commodities[random.randint(0,SERIES_RANGE)].get('href')
 
     ## 一番直近のパックの商品を選択し、そのURLを取得
-    ## "Uncaught TypeError: PTC.setCardDetailPopupWindow is not a function" が出る
     driver.get(URL_PTCG+URL_PTCG_RULE)
     WebDriverWait(driver,WAIT_SECOND).until(EC.presence_of_element_located((By.CLASS_NAME, "ProductList_item_inner")))
     html=driver.page_source.encode('utf-8')
@@ -48,7 +47,7 @@ def main():
             productID=comi.get('href')
             break
     ## Q&Aの件数を取得し、ランダムに選択
-    driver.get(URL_PTCG+URL_PTCG_RULE+productID)
+    driver.get(URL_PTCG+productID)
     WebDriverWait(driver,WAIT_SECOND).until(EC.presence_of_element_located((By.CLASS_NAME, "HitNum")))
     html=driver.page_source.encode('utf-8')
     soup=BeautifulSoup(html, 'html.parser')
@@ -61,7 +60,7 @@ def main():
 
     ## Q&Aをランダムに取得
     ## "Uncaught TypeError: PTC.setCardDetailPopupWindow is not a function" が出る
-    driver.get(URL_PTCG+URL_PTCG_RULE+productID+'&page='+str(pageNum))
+    driver.get(URL_PTCG+productID+'&page='+str(pageNum))
     WebDriverWait(driver,WAIT_SECOND).until(EC.presence_of_element_located((By.CLASS_NAME, "FAQResultList_item")))
     html=driver.page_source.encode('utf-8')
     soup=BeautifulSoup(html, 'html.parser')
