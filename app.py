@@ -12,8 +12,8 @@ import json
 import os
 from requests_oauthlib import OAuth1Session
 
-URL_PTCG='https://www.pokemon-card.com/'
-URL_PTCG_RULE='rules/faq/'
+URL_PTCG='https://www.pokemon-card.com'
+URL_PTCG_RULE='/rules/faq/'
 URL_TEXT='https://api.twitter.com/1.1/statuses/update.json'
 URL_TL='https://api.twitter.com/1.1/statuses/home_timeline.json'
 URL_MEDIA='https://upload.twitter.com/1.1/media/upload.json'
