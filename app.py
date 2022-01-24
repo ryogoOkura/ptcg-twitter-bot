@@ -6,7 +6,6 @@ from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import random
 import re
-# import urllib.request
 import requests
 import json
 import os
@@ -191,46 +190,3 @@ def main():
 
 if __name__=='__main__':
     main()
-
-
-## おまけ タイムラインの取得
-# req_tl=mySession.get(URL_TL)
-# if req_tl.status_code!=200:
-#     print('time line error'+req_tl.text)
-# timelines=json.loads(req_tl.text)
-# for timeline in timelines:
-#     print(timeline['id'],timeline['text'])
-
-
-## tweepyを使う場合
-# auth=tweepy.OAuthHandler(CONSUMER_KEY,CONSUMER_SECRET)
-# auth.set_access_token(TOKEN,TOKEN_SECRET)
-# t=tweepy.API(auth)
-#
-# t.update_with_media(filename=imagePaths[0],status='test')
-#
-# status='Q '+bodys[0].text
-# isReply=False
-# while True:
-#     if isReply:
-#         id=t.home_timeline()[0].id
-#         t.update_status(status=status[:140],in_reply_to_status_id=id)
-#     else:
-#         t.update_status(status=status[:140])
-#     if len(status)<=140:
-#         break
-#     status=status[140:]
-#     isReply=True
-#
-# status='A '+bodys[1].text
-# while True:
-#     id=t.home_timeline()[0].id
-#     t.update_status(status=status[:140],in_reply_to_status_id=id)
-#     if len(status)<=140:
-#         break
-#     status=status[140:]
-#
-## おまけ　タイムラインの取得
-# timelines=t.home_timeline()
-# for timeline in timelines:
-#     print('{id}:{text}'.format(id=timeline.id,text=timeline.text))
