@@ -10,6 +10,7 @@ import re
 import requests
 import json
 import os
+import time
 from requests_oauthlib import OAuth1Session
 
 URL_PTCG='https://www.pokemon-card.com'
@@ -29,15 +30,21 @@ def main():
     options.add_argument('--proxy-bypass-list=*')
     options.add_argument('--start-maxmized') # windowサイズ最大化
     driver=webdriver.Chrome(executable_path=driver_path, chrome_options=options)
-    WAIT_SECOND=30 # 最大表示待ち時間
+    driver.implicitly_wait(10) # 暗黙的な待機時間
+    WAIT_SECOND=30 # 明示的な待機時間
 
     # ## 直近の SERIES_RANGE 個の商品からランダムに選択し、そのURLを取得
     # SERIES_RANGE=0
     # productID=commodities[random.randint(0,SERIES_RANGE)].get('href')
 
     ## 一番直近のパックの商品を選択し、そのURLを取得
-    driver.get(URL_PTCG+URL_PTCG_RULE)
-    WebDriverWait(driver,WAIT_SECOND).until(EC.presence_of_element_located((By.CLASS_NAME, "ProductList_item_inner")))
+    try:
+        driver.get(URL_PTCG+URL_PTCG_RULE)
+        WebDriverWait(driver,WAIT_SECOND).until(EC.presence_of_element_located( (By.CLASS_NAME, "ProductList_item_inner") ))
+    except:
+        print('err1')
+        driver.quit()
+        return
     html=driver.page_source.encode('utf-8')
     soup=BeautifulSoup(html, 'html.parser')
     commodities=soup.find_all('a',attrs={'class':'ProductList_item_inner'})
@@ -47,8 +54,13 @@ def main():
             productID=comi.get('href')
             break
     ## Q&Aの件数を取得し、ランダムに選択
-    driver.get(URL_PTCG+productID)
-    WebDriverWait(driver,WAIT_SECOND).until(EC.presence_of_element_located((By.CLASS_NAME, "HitNum")))
+    try:
+        driver.get(URL_PTCG+productID)
+        WebDriverWait(driver,WAIT_SECOND).until(EC.presence_of_element_located((By.CLASS_NAME, "HitNum")))
+    except:
+        print('err2')
+        driver.quit()
+        return
     html=driver.page_source.encode('utf-8')
     soup=BeautifulSoup(html, 'html.parser')
     # hitCount=soup.find_all('div',attr={'class':'HitNum'})
@@ -57,11 +69,17 @@ def main():
     hitNum=int(searchResult.parent.span.text)
     num=random.randint(0,hitNum-1)
     pageNum=num//10+1
+    print(f'hitNum={hitNum} num={num} pageNum={pageNum}')
 
     ## Q&Aをランダムに取得
     ## "Uncaught TypeError: PTC.setCardDetailPopupWindow is not a function" が出る
-    driver.get(URL_PTCG+productID+'&page='+str(pageNum))
-    WebDriverWait(driver,WAIT_SECOND).until(EC.presence_of_element_located((By.CLASS_NAME, "FAQResultList_item")))
+    try:
+        driver.get(URL_PTCG+productID+'&page='+str(pageNum))
+        WebDriverWait(driver,WAIT_SECOND).until(EC.presence_of_element_located((By.CLASS_NAME, "FAQResultList_item")))
+    except:
+        print('err3')
+        driver.quit()
+        return
     html=driver.page_source.encode('utf-8')
     soup=BeautifulSoup(html, 'html.parser')
     listItems=soup.find_all('li',attrs={'class':'FAQResultList_item'})
@@ -72,13 +90,23 @@ def main():
     imagePaths=['' for _ in keyCards]
     imgCnt=0
     for card in keyCards:
-        driver.get(URL_PTCG+card.get('href'))
-        WebDriverWait(driver,WAIT_SECOND).until(EC.presence_of_element_located((By.CLASS_NAME, "fit")))
+        try:
+            driver.get(URL_PTCG+card.get('href'))
+            WebDriverWait(driver,WAIT_SECOND).until(EC.presence_of_element_located((By.CLASS_NAME, "fit")))
+        except:
+            print('err4')
+            driver.quit()
+            return
         html=driver.page_source.encode('utf-8')
         soup=BeautifulSoup(html, 'html.parser')
         img=soup.find('img',attrs={'class':'fit'})
 
-        response=requests.get(URL_PTCG+img.get('src'),stream=True)
+        try:
+            response=requests.get(URL_PTCG+img.get('src'), stream=True)
+        except:
+            print('err5')
+            driver.quit()
+            return
         imagePaths[imgCnt]='./'+str(imgCnt)+'.jpg'
         with open(imagePaths[imgCnt],mode="wb") as f:
             f.write(response.content)
@@ -121,18 +149,19 @@ def main():
 
         ## 質問文に４つずつ画像を添付する
         ## tweetCnt=0に対してimgCnt=1~4
-        if (imgCnt-1)//4>=tweetCnt:
+        if (imgCnt-1)//4>=tweetCnt: # imgCnt>=5 なら２つ目のツイートにも画像添付
             params['media_ids']=mediaIDs[tweetCnt]
-        ## 字数がtweet_maxを超えるなら分ける（statusが未tweet文章）
+        ## ツイートの分割
         if len(status)<=tweet_max:
-            if (imgCnt-1)//4>=tweetCnt+1:
+            if (imgCnt-1)//4>=tweetCnt+1: # 未表示画像があれば分ける（statusが未tweet文章）
                 status='カードの表示'
             else:
                 isTweeting=False
-        else:
+        else: # 字数がtweet_maxを超えるなら分ける（statusが未tweet文章）
             params['status']=params['status'][:(tweet_max-4)]+'（続く）'
             status=status[(tweet_max-4):]
         req_text=mySession.post(URL_TEXT,params=params)
+        time.sleep(2)
         # if req_text.status_code!=200:
         #     print('tweet error:'+req_text.text)
 
@@ -149,12 +178,14 @@ def main():
         #     print('timeline error'+req_tl.text)
         id=json.loads(req_tl.text)[0]['id']
         params['in_reply_to_status_id']=id
+        ## ツイートの分割
         if len(status)<=tweet_max:
             isTweeting=False
-        else:
+        else: # 字数がtweet_maxを超えるなら分ける（statusが未tweet文章）
             params['status']=params['status'][:(tweet_max-4)]+'（続く）'
             status=status[(tweet_max-4):]
         req_text=mySession.post(URL_TEXT,params=params)
+        time.sleep(2)
         # if req_text.status_code!=200:
         #     print('tweet error:'+req_text.text)
 
