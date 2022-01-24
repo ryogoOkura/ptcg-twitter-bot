@@ -24,10 +24,13 @@ def main():
     options=Options()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
-    options.add_argument('--disable-extentions') # 拡張機能無効化
-    options.add_argument('--proxy-server="direct://"')
-    options.add_argument('--proxy-bypass-list=*')
-    options.add_argument('--start-maxmized') # windowサイズ最大化
+    options.add_argument('--no-sandbox')                # sandboxモードを解除
+    options.add_argument('--disable-dev-shm-usage')     # /dev/shmパーティションの使用を禁止
+    options.add_argument('--window-size=500,500')       # 小さくしたほうがメモリ消費を抑えられる（クラッシュしづらい）
+    # options.add_argument('--start-maxmized')            # windowサイズ最大化
+    options.add_argument('--disable-extentions')        # 拡張機能無効化
+    options.add_argument('--proxy-server="direct://"')  # Proxy経由ではなく直接接続する
+    options.add_argument('--proxy-bypass-list=*')       # すべてのホスト名
     driver=webdriver.Chrome(executable_path=driver_path, chrome_options=options)
     driver.implicitly_wait(10) # 暗黙的な待機時間
     WAIT_SECOND=30 # 明示的な待機時間
